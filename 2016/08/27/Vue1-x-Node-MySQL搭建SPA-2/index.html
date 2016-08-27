@@ -1,0 +1,561 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="配置MySQL数据库在MySQL官网上下载并安装MySQL server，创建用户admin，然后用admin账户登录1mysql -uadmin -pxxx
+创建数据库prod_database1create database prod_database;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue1.x+Node+MySQL搭建SPA(2)">
+<meta property="og:url" content="http://yoursite.com/2016/08/27/Vue1-x-Node-MySQL搭建SPA-2/index.html">
+<meta property="og:site_name" content="程序媛elle">
+<meta property="og:description" content="配置MySQL数据库在MySQL官网上下载并安装MySQL server，创建用户admin，然后用admin账户登录1mysql -uadmin -pxxx
+创建数据库prod_database1create database prod_database;">
+<meta property="og:image" content="http://yoursite.com/images/vue-3.jpg">
+<meta property="og:updated_time" content="2016-08-27T08:37:03.713Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vue1.x+Node+MySQL搭建SPA(2)">
+<meta name="twitter:description" content="配置MySQL数据库在MySQL官网上下载并安装MySQL server，创建用户admin，然后用admin账户登录1mysql -uadmin -pxxx
+创建数据库prod_database1create database prod_database;">
+<meta name="twitter:image" content="http://yoursite.com/images/vue-3.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> Vue1.x+Node+MySQL搭建SPA(2) | 程序媛elle </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">程序媛elle</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Vue1.x+Node+MySQL搭建SPA(2)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-27T16:11:04+08:00" content="2016-08-27">
+              2016-08-27
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="配置MySQL数据库"><a href="#配置MySQL数据库" class="headerlink" title="配置MySQL数据库"></a>配置MySQL数据库</h1><p>在MySQL官网上下载并安装MySQL server，创建用户admin，然后用admin账户登录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql -uadmin -pxxx</div></pre></td></tr></table></figure></p>
+<p>创建数据库prod_database<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">create database prod_database;</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>然后创建表house<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">use prod_database; </div><div class="line">CREATE TABLE `prod_database`.`house` (</div><div class="line">  `houseID` INT NOT NULL,</div><div class="line">  `money` INT NOT NULL,</div><div class="line">  `status` INT NOT NULL,</div><div class="line">  `watermeter` INT NULL,</div><div class="line">  `ammeter` INT NULL,</div><div class="line">  `elevator` INT NULL,</div><div class="line">  `clean` INT NULL,</div><div class="line">  `net` INT NULL,</div><div class="line">  PRIMARY KEY (`houseID`));</div></pre></td></tr></table></figure></p>
+<p>也可以下载MySQL workbench，直接操作创建表，不用自己写sql语句</p>
+<h1 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h1><p>配置完MySQL之后，就要在node环境里连接数据库，来操作数据库增删改查了<br>首先安装mysql模块<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm i mysql --save</div></pre></td></tr></table></figure></p>
+<p>安装完之后就可以用这个模块与mysql进行交互了，我们创建db.js文件，这样执行<code>node db</code>就可以连接数据库了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">var mysql = require(&apos;mysql&apos;)</div><div class="line"></div><div class="line">var connection = mysql.createConnection(&#123;</div><div class="line">  host: &apos;localhost&apos;,</div><div class="line">  user: &apos;your_user&apos;,</div><div class="line">  password: &apos;some_secret&apos;,</div><div class="line">  database: &apos;the_app_database&apos;</div><div class="line">&#125;)</div><div class="line"></div><div class="line">connection.connect(function(err) &#123;</div><div class="line">  if (err) throw err</div><div class="line">  console.log(&apos;You are now connected...&apos;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<h1 id="安装express"><a href="#安装express" class="headerlink" title="安装express"></a>安装express</h1><p>先安装express，express是目前最流行的基于Node.js的Web开发框架，可以快速地搭建一个完整功能的网站。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm i express body-parser --save</div></pre></td></tr></table></figure></p>
+<p>然后我们创建app.js，将db相关的配置放在db.js里，然后在app.js里引入；可以将所有请求都放app.js里头写，但是这样太ugly了，所以我们抽取出去，看最后一行代码app.use(‘/houses’, require(‘./src/controllers/houses’))，就是将需要处理的逻辑放在了’./src/controllers/houses’里头了<br>app.use是用来加载用于处理http请求的中间件，在/houses路径中任何类型的http请求都会执行后面的require(‘./src/controllers/houses’)函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">var db = require(&apos;./db&apos;)</div><div class="line">var express = require(&apos;express&apos;)</div><div class="line">var app = express()</div><div class="line">var bodyParser = require(&apos;body-parser&apos;)</div><div class="line"></div><div class="line">//为了解决跨域问题，需要配置一下request header，可以将Access-Control-Allow-Origin配置成我们所需的域名和端口号</div><div class="line">app.all(&quot;*&quot;, function (req, res, next) &#123;</div><div class="line">  res.header(&apos;Access-Control-Allow-Origin&apos;, &apos;*&apos;);</div><div class="line">  res.header(&quot;Access-Control-Allow-Headers&quot;, &quot;Content-Type,Content-Length, Authorization, Accept,X-Requested-With&quot;);</div><div class="line">  res.header(&quot;Access-Control-Allow-Methods&quot;,&quot;PUT,POST,GET,DELETE,OPTIONS&quot;);</div><div class="line">  if (req.method == &apos;OPTIONS&apos;) &#123;</div><div class="line">    res.send(&apos;success&apos;);</div><div class="line">  &#125; else &#123;</div><div class="line">    next();</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">// 连接数据库，监听端口</div><div class="line">db.connect(function(err) &#123;</div><div class="line">  if (err) &#123;</div><div class="line">    console.log(&apos;Unable to connect to MySQL.&apos;)</div><div class="line">    process.exit(1)</div><div class="line">  &#125; else &#123;</div><div class="line">    app.listen(8888, function() &#123;</div><div class="line">    console.log(&apos;Listening on port 8888...&apos;)</div><div class="line">    &#125;)</div><div class="line">  &#125;</div><div class="line">&#125;)</div><div class="line"></div><div class="line">app.use(bodyParser.json())</div><div class="line">app.use(&apos;/houses&apos;, require(&apos;./src/controllers/houses&apos;))</div></pre></td></tr></table></figure></p>
+<p>db.js，我们用createPool的方法来创建数据库，createPool比createConnection性能更好些<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">var mysql = require(&apos;mysql&apos;)</div><div class="line">var pool</div><div class="line"></div><div class="line">exports.connect = function(done) &#123;</div><div class="line">  pool = mysql.createPool(&#123;</div><div class="line">    host: &apos;localhost&apos;,</div><div class="line">    user: &apos;admin&apos;,</div><div class="line">    password: &apos;xxxxxxxx&apos;,</div><div class="line">    database: &apos;prod_database&apos;,</div><div class="line">    port: 3306</div><div class="line">  &#125;)</div><div class="line">  done()</div><div class="line">&#125;</div><div class="line"></div><div class="line">exports.get = function() &#123;</div><div class="line">  return pool</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="构建MVC架构"><a href="#构建MVC架构" class="headerlink" title="构建MVC架构"></a>构建MVC架构</h1><p>先看一下我们的目录结构，在src下增加views、controllers、models目录，views放所有的页面，controllers处理所有http请求，models写sql语句取数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">build/</div><div class="line">dist/</div><div class="line">node_modules/</div><div class="line">src/</div><div class="line">    assets/</div><div class="line">    components/</div><div class="line">    controllers/</div><div class="line">    models/</div><div class="line">    views/</div><div class="line">    App.vue</div><div class="line">    main.js</div><div class="line">static/</div><div class="line">test/</div><div class="line">app.js</div><div class="line">db.js</div><div class="line">index.html</div></pre></td></tr></table></figure></p>
+<h2 id="Controllers"><a href="#Controllers" class="headerlink" title="Controllers"></a>Controllers</h2><p>在上一节中，我们在app.js里用了app.use(‘/houses’, require(‘./src/controllers/houses’))，现在我们看看controllers/houses里的代码，可以看到router处理/houses/list路径的get请求，获取房屋列表的值，然后调用了model层houseModel.getAll的方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">//src/controllers/houses</div><div class="line">var express = require(&apos;express&apos;);</div><div class="line">var router = express.Router();</div><div class="line">var houseModel = require(&apos;../models/houses&apos;);</div><div class="line"></div><div class="line">router.get(&apos;/list&apos;,function(req, res)&#123;</div><div class="line">  console.log(&apos;/house/list&apos;)</div><div class="line">  houseModel.getAll(function(err,rows)&#123;</div><div class="line">	if (err) &#123;</div><div class="line">	  res.send(&#123;status:false,errmsg:&apos;获取房屋列表失败&apos;&#125;)</div><div class="line">	&#125;</div><div class="line">	res.send(&#123;status:true,house:rows&#125;);</div><div class="line">  &#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<h2 id="Models"><a href="#Models" class="headerlink" title="Models"></a>Models</h2><p>在model层中我们主要连接数据库，并写sql语句去增删改查prod_database里的数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">//src/models/houses</div><div class="line">var db = require(&apos;./../../db&apos;)</div><div class="line"></div><div class="line">exports.getAll = function(done) &#123;</div><div class="line">  db.get().query(&apos;SELECT * FROM house&apos;, function (err, rows) &#123;</div><div class="line">  	console.log(rows)</div><div class="line">    if (err) return done(err)</div><div class="line">    done(null, rows)</div><div class="line">  &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="Views"><a href="#Views" class="headerlink" title="Views"></a>Views</h2><p>前面我们将houses的值写死了，现在我们可以通过http请求获取了，修改src/views/house/list.vue中的<code>&lt;script&gt;</code>，通过this.$http.get来发送请求，获取房屋的列表<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">//src/views/house/list.vue</div><div class="line">export default&#123;</div><div class="line">  data()&#123;</div><div class="line">	return &#123;</div><div class="line">	  houses: [],</div><div class="line">	&#125;</div><div class="line">  &#125;,</div><div class="line">  ready()&#123;</div><div class="line">	this.refreshHouse();</div><div class="line">  &#125;,</div><div class="line">  methods:&#123;</div><div class="line">	refreshHouse: function()&#123;</div><div class="line">	  this.$http.get(&apos;http://localhost:8888/houses/list&apos;).then(function(res)&#123;</div><div class="line">		console.log(res)</div><div class="line">		let data = res.data;</div><div class="line">        if(!data.status)&#123;</div><div class="line">          alert(data.errmsg);</div><div class="line">          return false;</div><div class="line">        &#125;else&#123;</div><div class="line">          this.houses = data.house;</div><div class="line">        &#125;</div><div class="line">	  &#125;)</div><div class="line">	&#125;,</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>好了，这样我们就完成了Vue+Node+MySQL的单页应用了~ 现在我们看看效果，执行以下命令，然后在浏览器窗口输入localhost:8080，打出response的值，可以看到返回的data信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//启动数据库，接收http请求</div><div class="line">$ node app</div><div class="line">//启动程序</div><div class="line">$ npm run dev</div></pre></td></tr></table></figure></p>
+<p><img src="/images/vue-3.jpg" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/27/Vue1-x-Node-MySQL搭建SPA-1/" rel="next" title="Vue1.x+Node+MySQL搭建SPA(1)">
+                <i class="fa fa-chevron-left"></i> Vue1.x+Node+MySQL搭建SPA(1)
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1.jpg"
+               alt="Elle" />
+          <p class="site-author-name" itemprop="name">Elle</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#配置MySQL数据库"><span class="nav-number">1.</span> <span class="nav-text">配置MySQL数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#连接数据库"><span class="nav-number">2.</span> <span class="nav-text">连接数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装express"><span class="nav-number">3.</span> <span class="nav-text">安装express</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#构建MVC架构"><span class="nav-number">4.</span> <span class="nav-text">构建MVC架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Controllers"><span class="nav-number">4.1.</span> <span class="nav-text">Controllers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Models"><span class="nav-number">4.2.</span> <span class="nav-text">Models</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Views"><span class="nav-number">4.3.</span> <span class="nav-text">Views</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Elle</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
