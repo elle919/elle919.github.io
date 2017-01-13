@@ -230,6 +230,105 @@
             
               
                 
+                <a class="post-title-link" href="/2017/01/13/前端异常监控平台2：nginx配置及日志处理/" itemprop="url">
+                  前端异常监控平台2：nginx配置及日志处理
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-13T18:36:24+08:00" content="2017-01-13">
+              2017-01-13
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>前一篇文章讲了前端如何捕获异常，异常信息通过Get一个url，落入对应的log日志里。这一章具体地讲一下如何配置nginx才能够收集到前端发送的异常信息，以及logstash如何对日志进行解析和处理的。</p>
+<h1 id="Nginx配置"><a href="#Nginx配置" class="headerlink" title="Nginx配置"></a>Nginx配置</h1><h2 id="配置流程"><a href="#配置流程" class="headerlink" title="配置流程"></a>配置流程</h2><p>再回顾一下前端落日志的方法，其中/static/img/error_log.gif这个gif是不存在的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var img = new Image();</div><div class="line">img.src = &apos;//&apos;+window.location.hostname+&quot;/static/img/error_log.gif?msg=&quot;+data.msg+&quot;&amp;file=&quot;+data.file+&quot;&amp;line=&quot;+data.line+&quot;&amp;col=&quot;+data.col;</div></pre></td></tr></table></figure></p>
+<p>我们在nginx中进行路径的配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">location ^~ /static/img/error_log.gif&#123;</div><div class="line">    empty_gif;</div><div class="line">    access_log /opt/logs/js.access.json.log json;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>每回get这个/static/img/error_log.gif的时候，nginx匹配到这个location，会落入/opt/logs/js.access.json.log这个日志。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2017/01/13/前端异常监控平台2：nginx配置及日志处理/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2017/01/13/前端异常监控平台1：前端捕获异常/" itemprop="url">
                   前端异常监控平台1：前端捕获异常
                 </a>
@@ -546,7 +645,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

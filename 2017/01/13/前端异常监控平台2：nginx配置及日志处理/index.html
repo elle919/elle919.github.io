@@ -1,0 +1,562 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="前一篇文章讲了前端如何捕获异常，异常信息通过Get一个url，落入对应的log日志里。这一章具体地讲一下如何配置nginx才能够收集到前端发送的异常信息，以及logstash如何对日志进行解析和处理的。
+Nginx配置配置流程再回顾一下前端落日志的方法，其中/static/img/error_log.gif这个gif是不存在的。12var img = new Image();img.src = &amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端异常监控平台2：nginx配置及日志处理">
+<meta property="og:url" content="http://yoursite.com/2017/01/13/前端异常监控平台2：nginx配置及日志处理/index.html">
+<meta property="og:site_name" content="程序媛elle">
+<meta property="og:description" content="前一篇文章讲了前端如何捕获异常，异常信息通过Get一个url，落入对应的log日志里。这一章具体地讲一下如何配置nginx才能够收集到前端发送的异常信息，以及logstash如何对日志进行解析和处理的。
+Nginx配置配置流程再回顾一下前端落日志的方法，其中/static/img/error_log.gif这个gif是不存在的。12var img = new Image();img.src = &amp;">
+<meta property="og:image" content="http://yoursite.com/images/fe-monitor/logstash1.png">
+<meta property="og:image" content="http://yoursite.com/images/fe-monitor/logstash2.jpg">
+<meta property="og:updated_time" content="2017-01-13T10:38:21.507Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前端异常监控平台2：nginx配置及日志处理">
+<meta name="twitter:description" content="前一篇文章讲了前端如何捕获异常，异常信息通过Get一个url，落入对应的log日志里。这一章具体地讲一下如何配置nginx才能够收集到前端发送的异常信息，以及logstash如何对日志进行解析和处理的。
+Nginx配置配置流程再回顾一下前端落日志的方法，其中/static/img/error_log.gif这个gif是不存在的。12var img = new Image();img.src = &amp;">
+<meta name="twitter:image" content="http://yoursite.com/images/fe-monitor/logstash1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 前端异常监控平台2：nginx配置及日志处理 | 程序媛elle </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">程序媛elle</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                前端异常监控平台2：nginx配置及日志处理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-13T18:36:24+08:00" content="2017-01-13">
+              2017-01-13
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前一篇文章讲了前端如何捕获异常，异常信息通过Get一个url，落入对应的log日志里。这一章具体地讲一下如何配置nginx才能够收集到前端发送的异常信息，以及logstash如何对日志进行解析和处理的。</p>
+<h1 id="Nginx配置"><a href="#Nginx配置" class="headerlink" title="Nginx配置"></a>Nginx配置</h1><h2 id="配置流程"><a href="#配置流程" class="headerlink" title="配置流程"></a>配置流程</h2><p>再回顾一下前端落日志的方法，其中/static/img/error_log.gif这个gif是不存在的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var img = new Image();</div><div class="line">img.src = &apos;//&apos;+window.location.hostname+&quot;/static/img/error_log.gif?msg=&quot;+data.msg+&quot;&amp;file=&quot;+data.file+&quot;&amp;line=&quot;+data.line+&quot;&amp;col=&quot;+data.col;</div></pre></td></tr></table></figure></p>
+<p>我们在nginx中进行路径的配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">location ^~ /static/img/error_log.gif&#123;</div><div class="line">    empty_gif;</div><div class="line">    access_log /opt/logs/js.access.json.log json;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>每回get这个/static/img/error_log.gif的时候，nginx匹配到这个location，会落入/opt/logs/js.access.json.log这个日志。<br><a id="more"></a><br>logstash能够处理的日志格式有多种，比较常用的是json格式，在这里我们在access_log的后面设定了落入的是json格式。这需要在nginx.conf里进行配置，重新创建一种log_format叫json，然后拼接需要落入的字段。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">log_format json &apos;&#123;&quot;@timestamp&quot;:&quot;$time_iso8601&quot;,&apos;</div><div class="line">&apos;&quot;@version&quot;:&quot;1&quot;,&apos;</div><div class="line">&apos;&quot;server_addr&quot;:&quot;$server_addr&quot;,&apos;</div><div class="line">&apos;&quot;remote_addr&quot;:&quot;$remote_addr&quot;,&apos;</div><div class="line">&apos;&quot;request_method&quot;:&quot;$request_method&quot;,&apos;</div><div class="line">&apos;&quot;scheme&quot;:&quot;$scheme&quot;,&apos;</div><div class="line">&apos;&quot;host&quot;:&quot;$host&quot;,&apos;</div><div class="line">&apos;&quot;server_protocol&quot;: &quot;$server_protocol&quot;,&apos;</div><div class="line">&apos;&quot;status&quot;:&quot;$status&quot;,&apos;</div><div class="line">&apos;&quot;body_bytes_sent&quot;:$body_bytes_sent,&apos;</div><div class="line">&apos;&quot;http_user_agent&quot;:&quot;$http_user_agent&quot;,&apos;</div><div class="line">&apos;&quot;http_x_forwarded_for&quot;:&quot;$http_x_forwarded_for&quot;,&apos;</div><div class="line">&apos;&quot;request_time&quot;:$request_time,&apos;</div><div class="line">&apos;&quot;upstream_addr&quot;:&quot;$upstream_addr&quot;,&apos;</div><div class="line">&apos;&quot;upstream_status&quot;:&quot;$upstream_status&quot;,&apos;</div><div class="line">&apos;&quot;upstream_response_time&quot;:&quot;$upstream_response_time&quot;,&apos;</div><div class="line">&apos;&quot;upstream_http_x_upstream_info&quot;:&quot;$upstream_http_x_upstream_info&quot;,&apos;</div><div class="line">&apos;&quot;http_referer&quot;:&quot;$http_referer&quot;,&apos;</div><div class="line">&apos;&quot;request_uri&quot;:&quot;$request_uri&quot;&#125;&apos;;</div></pre></td></tr></table></figure></p>
+<p>我们前面落入的异常信息则存储在$request_uri这个字段里。<br><code>img.src = &#39;//&#39;+window.location.hostname+&quot;/static/img/error_log.gif?msg=&quot;+data.msg+&quot;&amp;file=&quot;+data.file+&quot;&amp;line=&quot;+data.line+&quot;&amp;col=&quot;+data.col;</code></p>
+<p>最后落入的日志如下</p>
+<p>{“@timestamp”:”2017-01-11T15:03:52+08:00”,”@version”:”1”,”server_addr”:”10.115.112.40”,”remote_addr”: “113.139.81.253”,”request_method”:”GET”,”scheme”:”http”,”host”:”e.360.cn”,”server_protocol”: “HTTP/1.1”, “status”:”200”,”body_bytes_sent”:43,”http_user_agent”:”Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit /537.36 (KHTML, like Gecko) Chrome/45.0.2.454.101 Safari/537.36 QIHU 360SE”,”http_x_forwarded_for”:”-“, “request_time”:0.049,”upstream_addr”:”-“,”upstream_status”:”-“,”upstream_response_time”:”-“,”upstream_http<br>_x_upstream_info”:”-“,”http<em>referer”:”<a href="http://e.360.cn/home?" target="_blank" rel="external">http://e.360.cn/home?</a></em>=1484118223264”,”request_uri”:”/static /img/error_log.gif?msg=Uncaught%20SyntaxError:%20Unexpected%20token%20;&amp;file=/home&amp;line=139&amp;col=18”}</p>
+<h2 id="遇到问题"><a href="#遇到问题" class="headerlink" title="遇到问题"></a>遇到问题</h2><p><strong>无法落入nginx日志</strong><br>在发送/static/img/error_log.gif?params请求的时候，会返回404的错误，根本没有落到对应的日志。</p>
+<p>解决方法：nginx的location配置。<br>一开始设置的是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">location /static/img/error_log.gif&#123;</div><div class="line">    # 匹配任何以/static/img/error_log.gif开头的地址，匹配符合后，还要继续往下搜索</div><div class="line">    # 只有后面的正则表达式都没匹配到，才采用这条</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>但是后来排查平台里有优先级更高的location配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /static/&#123;</div><div class="line">    # 匹配任何以/static开头的地址，匹配符合后，停止往下搜索正则，采取这条</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>后来修改匹配路径，提高优先级<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /static/img/error_log.gif&#123;</div><div class="line">    # 匹配任何以/static/img/error_log.gif开头的地址，匹配符合后，停止往下搜索正则，采取这条</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>要注意location优先级：(location =) &gt; (location ^~) &gt; (location ~ ~*) &gt; (location /)</p>
+<h1 id="logstash-日志处理"><a href="#logstash-日志处理" class="headerlink" title="logstash-日志处理"></a>logstash-日志处理</h1><h2 id="日志处理配置流程"><a href="#日志处理配置流程" class="headerlink" title="日志处理配置流程"></a>日志处理配置流程</h2><p>logstash用于处理input | decode | filter | encode | output 的数据流，流程如下图<br><img src="/images/fe-monitor/logstash1.png" alt=""><br>而我们的处理流程如下，input是收集的nginx日志，decode和encode主要是通过codec设置来实现，我们选择了json格式，最后output处理完的数据会存储在elasticsearch里。<br><img src="/images/fe-monitor/logstash2.jpg" alt=""><br>logstash的配置文件如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">input &#123;</div><div class="line">    file &#123;</div><div class="line">        //nginx日志路径</div><div class="line">        path =&gt; [&quot;/opt/logs/js.access.json.log&quot;]</div><div class="line">        type =&gt; &quot;nginx_front_shgt_js&quot;</div><div class="line">        codec =&gt; &quot;json&quot;</div><div class="line">        start_position =&gt; &quot;end&quot;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">output &#123;</div><div class="line">    if [type] == &quot;nginx_front_shgt_js&quot; &#123;</div><div class="line">        elasticsearch &#123;</div><div class="line">            //存储的服务器</div><div class="line">            hosts =&gt; [&quot;10.xxx.xxx.xx1:9200&quot;,&quot;10.xxx.xxx.xx2:9200&quot;,&quot;10.xxx.xxx.xx3:9200&quot;]</div><div class="line">            //数据库名称</div><div class="line">            index =&gt; &quot;nginx_front_shgt_js-%&#123;+YYYY.MM.dd&#125;&quot;</div><div class="line">            document_type =&gt; &quot;%&#123;type&#125;&quot;</div><div class="line">            workers =&gt; 4</div><div class="line">            //努力攒到20000条一次性发送出去</div><div class="line">            flush_size =&gt; 20000</div><div class="line">            //10秒内未攒够20000条也会发送</div><div class="line">            idle_flush_time =&gt; 10</div><div class="line">            template_overwrite =&gt; true</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="遇到问题-1"><a href="#遇到问题-1" class="headerlink" title="遇到问题"></a>遇到问题</h2><p><strong>request_uri分字段存入数据库</strong><br>由于异常信息全部都存在request_uri这个字段里了，检索和展示都带来很多不便，取回数据之后，每次我还需要通过正则，再处理成我需要的数组。OPS让我将request_uri设置成analyzed，能够实现分词检索，然而并不是我想要的效果，我还是要取回数据做正则处理。</p>
+<p>解决方法：Grok正则<br>在input和output中间的filter过程，就是用来解析和处理字段的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">filter &#123;</div><div class="line">    if [type] == &quot;nginx_front_shgt_js&quot; &#123;</div><div class="line">        grok &#123;</div><div class="line">            match =&gt; [ &quot;request_uri&quot;, &quot;%&#123;GREEDYDATA:uri_stem&#125;\?%&#123;GREEDYDATA:uri_query&#125;&quot;]</div><div class="line">        &#125;</div><div class="line">        kv &#123;</div><div class="line">            source =&gt; &quot;uri_query&quot;</div><div class="line">            field_split =&gt; &quot;&amp;&quot;</div><div class="line">            prefix =&gt; &quot;uri_&quot;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过grok对request_uri进行正则匹配，取到url问号后面的参数：uri<em>query。再通过key value，利用&amp;进行分割，分割后的key会加上uri</em>的前缀。例如：<br>request uri: “/static /img/error_log.gif?msg=Uncaught%20SyntaxError:%20Unexpected%20token%20;&amp;file=/home&amp;line=139&amp;col=18”<br>那么处理完之后的数据为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    uri_msg: &quot;Uncaught%20SyntaxError:%20Unexpected%20token%20;&quot;,</div><div class="line">    uri_file: &quot;/home&quot;,</div><div class="line">    uri_line: &quot;139&quot;,</div><div class="line">    uri_col: &quot;18&quot;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/13/前端异常监控平台1：前端捕获异常/" rel="next" title="前端异常监控平台1：前端捕获异常">
+                <i class="fa fa-chevron-left"></i> 前端异常监控平台1：前端捕获异常
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/1.jpg"
+               alt="Elle" />
+          <p class="site-author-name" itemprop="name">Elle</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Nginx配置"><span class="nav-number">1.</span> <span class="nav-text">Nginx配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置流程"><span class="nav-number">1.1.</span> <span class="nav-text">配置流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到问题"><span class="nav-number">1.2.</span> <span class="nav-text">遇到问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#logstash-日志处理"><span class="nav-number">2.</span> <span class="nav-text">logstash-日志处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#日志处理配置流程"><span class="nav-number">2.1.</span> <span class="nav-text">日志处理配置流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到问题-1"><span class="nav-number">2.2.</span> <span class="nav-text">遇到问题</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Elle</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
