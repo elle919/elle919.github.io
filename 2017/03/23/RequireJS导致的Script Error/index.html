@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="前端错误监控,Script Error,requirejs," />
+  <meta name="keywords" content="前端错误监控,requirejs,Script Error," />
 
 
 
@@ -102,7 +102,12 @@
 同一个域名底下的下载线程数有限制，域名分散能够避免这问题
 
 但这样也导致了我们最头疼的问题：Script Error。这是因为浏览器安全性问题，会隐藏跨域的错误，避免">
-<meta property="og:updated_time" content="2017-03-23T06:45:37.435Z">
+<meta property="og:image" content="http://yoursite.com/images/fe-monitor/script1.jpg">
+<meta property="og:image" content="http://yoursite.com/images/fe-monitor/script2.jpg">
+<meta property="og:image" content="http://yoursite.com/images/fe-monitor/error1.jpg">
+<meta property="og:image" content="http://yoursite.com/images/fe-monitor/error2.jpg">
+<meta property="og:image" content="http://yoursite.com/images/fe-monitor/error3.jpg">
+<meta property="og:updated_time" content="2017-03-23T06:57:54.877Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RequireJS导致的Script Error">
 <meta name="twitter:description" content="Script Error常见解决方法现在的静态资源基本都会上CDN，与主域不在一个域名下。这样能带来很多好处：
@@ -112,6 +117,7 @@
 同一个域名底下的下载线程数有限制，域名分散能够避免这问题
 
 但这样也导致了我们最头疼的问题：Script Error。这是因为浏览器安全性问题，会隐藏跨域的错误，避免">
+<meta name="twitter:image" content="http://yoursite.com/images/fe-monitor/script1.jpg">
 
 
 
@@ -299,17 +305,17 @@
 <p>简单地说，主要有两步：<br>1）添加crossorigin=”anonymous”<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script src=&quot;http://another-domain.com/app.js&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;</div></pre></td></tr></table></figure></p>
 <p>2）服务器端添加Cross Origin Http Header<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Access-Control-Allow-Origin: *</div></pre></td></tr></table></figure></p>
 <p>但是天杀的啊，捕获到的错误还是显示Script Error，我内心真的是崩溃的啊！说好的两步走呢！而且离奇的是，同样都是跨域，有的文件能捕获到具体的错误信息，有的就是Script Error！玩我啊，还有随机性！很少有资料提到这个问题啊！难道大家都没碰到这问题吗！一顿咆哮之后，我终于发现了玄机！<br><a id="more"></a></p>
-<h1 id="Require-js导致的Script-Error"><a href="#Require-js导致的Script-Error" class="headerlink" title="Require.js导致的Script Error"></a>Require.js导致的Script Error</h1><p>在trunk环境时，我直接给<script>标签添加了crossorigin=”anonymous”属性。<br><img src="/images/fe-monitor/script1.jpg" alt=""><br>online上完CDN后，<script>标签的src变了。但是仍然是带着crossorigin属性的。<br><img src="/images/fe-monitor/script2.jpg" alt=""><br>可是require.js所依赖的js文件呢，它们异步加载的时候是不是也需要带上crossorigin属性呢？是不是require.js导致的script error呢？</p>
+<h1 id="Require-js导致的Script-Error"><a href="#Require-js导致的Script-Error" class="headerlink" title="Require.js导致的Script Error"></a>Require.js导致的Script Error</h1><p>在trunk环境时，我直接给<code>&lt;script&gt;</code>标签添加了crossorigin=”anonymous”属性。<br><img src="/images/fe-monitor/script1.jpg" alt=""><br>online上完CDN后，<code>&lt;script&gt;</code>标签的src变了。但是仍然是带着crossorigin属性的。<br><img src="/images/fe-monitor/script2.jpg" alt=""><br>可是require.js所依赖的js文件呢，它们异步加载的时候是不是也需要带上crossorigin属性呢？是不是require.js导致的script error呢？</p>
 <p>带着这个疑问，我简单地做了个实验，在本地修改文件adSearch.js，添加一行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">//adSearch.js</div><div class="line">var a = b; //b并未初始化定义，会抛出reference error</div></pre></td></tr></table></figure></p>
 <p>在另一个本地文件中adplan.js中引入了adSearch.js文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//adplan.js</div><div class="line">require([</div><div class="line">    &apos;js/module/adSearch&apos;,</div><div class="line">], function() &#123;</div><div class="line">    //具体代码</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<p>可以看到本地的报错信息：<br><img src="/images/fe-monitor/error1.jpg" alt=""><br>将adSearch.js传到CDN上，此时该文件跨域，将adplan.js文件的<script>设置crossorigin属性<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//adplan.js</div><div class="line">require([</div><div class="line">    &apos;http://s2.qhres.com/static/393c05538cf507f3.js&apos;,</div><div class="line">], function() &#123;</div><div class="line">    //具体代码</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<p>报错信息：<br><img src="/images/fe-monitor/error2.jpg" alt=""><br>可见，即使adplan.js的<script>标签加入了crossorigin属性，而依赖的js文件如果是跨域的，仍然会导致script error的问题。我看了require.js的github，在issues搜了下crossorigin，果然有人问了类似的问题。参考：<a href="https://github.com/requirejs/requirejs/issues/687">https://github.com/requirejs/requirejs/issues/687</a></p>
-<p>看一下Require.js的源码，了解一下它是如何异步加载依赖的js文件。主要看req.load（），是require.js往DOM里插入<script>的方法。其中createNode方法，这是作者在2.1.7版本中为了修复crossorigin，添加的方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">req.createNode = function (config, moduleName, url) &#123;</div><div class="line">    var node = config.xhtml ? document.createElementNS(&apos;http://www.w3.org/1999/xhtml&apos;, &apos;html:script&apos;) : document.createElement(&apos;script&apos;);</div><div class="line">    node.type = config.scriptType || &apos;text/javascript&apos;;</div><div class="line">    node.charset = &apos;utf-8&apos;;</div><div class="line">    node.async = true;</div><div class="line">    return node;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>这个方法能够用来修改将要插入DOM的<script>节点，也就能够给它添加crossorigin的属性。</p>
-<h1 id="最终解决方法：onNodeCreated"><a href="#最终解决方法：onNodeCreated" class="headerlink" title="最终解决方法：onNodeCreated"></a>最终解决方法：onNodeCreated</h1><p>有老外参考作者的方法，override了createNode，但是遇到了问题，作者推荐了onNodeCreated hook，能够在配置文件中直接对所有<script>进行配置。参考：<a href="https://github.com/requirejs/requirejs/issues/1550">https://github.com/requirejs/requirejs/issues/1550</a></p>
+<p>可以看到本地的报错信息：<br><img src="/images/fe-monitor/error1.jpg" alt=""><br>将adSearch.js传到CDN上，此时该文件跨域，将adplan.js文件的<code>&lt;script&gt;</code>设置crossorigin属性<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//adplan.js</div><div class="line">require([</div><div class="line">    &apos;http://s2.qhres.com/static/393c05538cf507f3.js&apos;,</div><div class="line">], function() &#123;</div><div class="line">    //具体代码</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>报错信息：<br><img src="/images/fe-monitor/error2.jpg" alt=""><br>可见，即使adplan.js的<code>&lt;script&gt;</code>标签加入了crossorigin属性，而依赖的js文件如果是跨域的，仍然会导致script error的问题。我看了require.js的github，在issues搜了下crossorigin，果然有人问了类似的问题。参考：<a href="https://github.com/requirejs/requirejs/issues/687" target="_blank" rel="external">https://github.com/requirejs/requirejs/issues/687</a></p>
+<p>看一下Require.js的源码，了解一下它是如何异步加载依赖的js文件。主要看req.load（），是require.js往DOM里插入<code>&lt;script&gt;</code>的方法。其中createNode方法，这是作者在2.1.7版本中为了修复crossorigin，添加的方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">req.createNode = function (config, moduleName, url) &#123;</div><div class="line">    var node = config.xhtml ? document.createElementNS(&apos;http://www.w3.org/1999/xhtml&apos;, &apos;html:script&apos;) : document.createElement(&apos;script&apos;);</div><div class="line">    node.type = config.scriptType || &apos;text/javascript&apos;;</div><div class="line">    node.charset = &apos;utf-8&apos;;</div><div class="line">    node.async = true;</div><div class="line">    return node;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>这个方法能够用来修改将要插入DOM的<code>&lt;script&gt;</code>节点，也就能够给它添加crossorigin的属性。</p>
+<h1 id="最终解决方法：onNodeCreated"><a href="#最终解决方法：onNodeCreated" class="headerlink" title="最终解决方法：onNodeCreated"></a>最终解决方法：onNodeCreated</h1><p>有老外参考作者的方法，override了createNode，但是遇到了问题，作者推荐了onNodeCreated hook，能够在配置文件中直接对所有<code>&lt;script&gt;</code>进行配置。参考：<a href="https://github.com/requirejs/requirejs/issues/1550" target="_blank" rel="external">https://github.com/requirejs/requirejs/issues/1550</a></p>
 <p>终于迎来了完美解决方案！！！！！<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">require.config(&#123;</div><div class="line">    onNodeCreated:function(node,config,id,url)&#123;</div><div class="line">    	node.setAttribute(&apos;crossorigin&apos;, &apos;anonymous&apos;);</div><div class="line">    	return node</div><div class="line">    &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
 <p>经验证，确实好使：<br><img src="/images/fe-monitor/error3.jpg" alt=""><br>Bye Bye啦，Script Error~ 哈哈哈哈哈~</p>
-</script></p>
+
       
     </div>
 
@@ -332,9 +338,9 @@
           
             <a href="/tags/前端错误监控/" rel="tag">#前端错误监控</a>
           
-            <a href="/tags/Script-Error/" rel="tag">#Script Error</a>
-          
             <a href="/tags/requirejs/" rel="tag">#requirejs</a>
+          
+            <a href="/tags/Script-Error/" rel="tag">#Script Error</a>
           
         </div>
       
@@ -456,7 +462,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Script-Error常见解决方法"><span class="nav-number">1.</span> <span class="nav-text">Script Error常见解决方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Require-js导致的Script-Error"><span class="nav-number">2.</span> <span class="nav-text">Require.js导致的Script Error</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Script-Error常见解决方法"><span class="nav-number">1.</span> <span class="nav-text">Script Error常见解决方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Require-js导致的Script-Error"><span class="nav-number">2.</span> <span class="nav-text">Require.js导致的Script Error</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最终解决方法：onNodeCreated"><span class="nav-number">3.</span> <span class="nav-text">最终解决方法：onNodeCreated</span></a></li></ol></div>
             
           </div>
         </section>
